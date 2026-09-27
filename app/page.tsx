@@ -208,11 +208,6 @@ function Hero() {
         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-transparent to-[#0b0812]" />
       </div>
 
-      <div className="relative h-64 w-full md:absolute md:inset-y-0 md:right-0 md:h-auto md:w-1/2">
-        <OffersBar className="absolute left-4 right-4 top-4 z-10" />
-        <HeroCarousel className="h-full rounded-none border-0 shadow-none" />
-      </div>
-
       <div className="relative mx-auto grid max-w-7xl grid-cols-1 items-center gap-10 px-6 py-24 md:grid-cols-2 md:py-32">
         <div className="relative flex flex-col items-center gap-6 text-center md:items-start md:text-left">
           <h1 className="max-w-lg text-4xl font-bold leading-tight tracking-tight text-white sm:text-5xl">
@@ -288,6 +283,11 @@ function Trending() {
             </div>
           ))}
         </div>
+      </div>
+
+      <div className="relative h-64 w-full md:absolute md:inset-y-0 md:right-0 md:h-auto md:w-1/2">
+        <OffersBar className="absolute left-4 right-4 top-4 z-10" />
+        <HeroCarousel className="h-full rounded-none border-0 shadow-none" />
       </div>
     </section>
   );
