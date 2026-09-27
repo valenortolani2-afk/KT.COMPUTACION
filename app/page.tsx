@@ -251,7 +251,7 @@ function MarqueeBar() {
 
 function Trending() {
   return (
-    <section id="trending" className="bg-[#0b0812] px-6 py-20">
+    <section id="trending" className="relative overflow-hidden bg-[#0b0812] px-6 py-20">
       <div className="mx-auto max-w-7xl">
         <h2 className="text-2xl font-semibold text-white sm:text-3xl">Tendencias</h2>
         <p className="mt-2 text-zinc-400">Echa un vistazo a nuestras mejores configuraciones</p>
