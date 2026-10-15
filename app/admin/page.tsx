@@ -126,6 +126,47 @@ export default function AdminPage() {
           Cargá una foto, precio y descripción. La publicación aparecerá automáticamente en la sección seleccionada.
         </p>
 
+        <section className="mt-8">
+          <h2 className="text-2xl font-semibold">Publicaciones actuales</h2>
+          <p className="mt-2 text-sm text-zinc-400">
+            Eliminá una publicación y su foto desde aquí.
+          </p>
+
+          {isLoadingProducts ? (
+            <p className="mt-6 text-sm text-zinc-400">Cargando publicaciones...</p>
+          ) : products.length > 0 ? (
+            <ul className="mt-6 space-y-4">
+              {products.map((product) => (
+                <li
+                  key={product.id}
+                  className="flex flex-col gap-4 rounded-2xl border border-white/10 bg-[#120f1c] p-4 sm:flex-row sm:items-center"
+                >
+                  <div className="relative h-24 w-full shrink-0 overflow-hidden rounded-xl sm:w-28">
+                    <Image src={product.imageUrl} alt={product.name} fill sizes="112px" className="object-cover" />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <h3 className="font-semibold text-white">{product.name}</h3>
+                    <p className="mt-1 text-sm text-violet-300">{CATEGORY_LABELS[product.category]}</p>
+                    <p className="mt-1 text-sm text-zinc-400">{product.price}</p>
+                  </div>
+                  <button
+                    type="button"
+                    disabled={deletingProductId !== null}
+                    onClick={() => void handleDelete(product.id, product.name)}
+                    className="rounded-xl border border-red-400/30 px-4 py-2 text-sm font-semibold text-red-300 transition hover:bg-red-500/10 disabled:cursor-not-allowed disabled:opacity-50"
+                  >
+                    {deletingProductId === product.id ? "Eliminando..." : "Eliminar foto y publicación"}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="mt-6 rounded-2xl border border-dashed border-white/15 p-6 text-sm text-zinc-500">
+              Todavía no hay publicaciones para administrar.
+            </p>
+          )}
+        </section>
+
         <form
           onSubmit={handleSubmit}
           className="mt-10 space-y-6 rounded-3xl border border-white/10 bg-[#120f1c] p-6 sm:p-8"
@@ -206,44 +247,6 @@ export default function AdminPage() {
           </button>
         </form>
 
-        <section className="mt-12">
-          <h2 className="text-2xl font-semibold">Publicaciones actuales</h2>
-          <p className="mt-2 text-sm text-zinc-400">Desde aquí podés revisar o eliminar publicaciones del catálogo.</p>
-
-          {isLoadingProducts ? (
-            <p className="mt-6 text-sm text-zinc-400">Cargando publicaciones...</p>
-          ) : products.length > 0 ? (
-            <ul className="mt-6 space-y-4">
-              {products.map((product) => (
-                <li
-                  key={product.id}
-                  className="flex flex-col gap-4 rounded-2xl border border-white/10 bg-[#120f1c] p-4 sm:flex-row sm:items-center"
-                >
-                  <div className="relative h-24 w-full shrink-0 overflow-hidden rounded-xl sm:w-28">
-                    <Image src={product.imageUrl} alt={product.name} fill sizes="112px" className="object-cover" />
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <h3 className="font-semibold text-white">{product.name}</h3>
-                    <p className="mt-1 text-sm text-violet-300">{CATEGORY_LABELS[product.category]}</p>
-                    <p className="mt-1 text-sm text-zinc-400">{product.price}</p>
-                  </div>
-                  <button
-                    type="button"
-                    disabled={deletingProductId !== null}
-                    onClick={() => void handleDelete(product.id, product.name)}
-                    className="rounded-xl border border-red-400/30 px-4 py-2 text-sm font-semibold text-red-300 transition hover:bg-red-500/10 disabled:cursor-not-allowed disabled:opacity-50"
-                  >
-                    {deletingProductId === product.id ? "Eliminando..." : "Eliminar"}
-                  </button>
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p className="mt-6 rounded-2xl border border-dashed border-white/15 p-6 text-sm text-zinc-500">
-              Todavía no hay publicaciones para administrar.
-            </p>
-          )}
-        </section>
       </div>
     </main>
   );
