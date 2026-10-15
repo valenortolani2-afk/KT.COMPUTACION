@@ -189,7 +189,7 @@ function Navbar() {
 
 function Hero() {
   return (
-    <section className="relative overflow-hidden bg-[#0b0812]">
+    <section className="relative overflow-hidden bg-[#0b0812] md:min-h-[calc(100vh-4rem)]">
       <div className="pointer-events-none absolute inset-0">
         <div className="absolute -top-32 left-1/3 h-96 w-96 rounded-full bg-violet-700/30 blur-[120px]" />
         <div className="absolute -bottom-24 right-0 h-80 w-80 rounded-full bg-fuchsia-700/20 blur-[110px]" />
@@ -208,7 +208,7 @@ function Hero() {
         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-transparent to-[#0b0812]" />
       </div>
 
-      <div className="relative mx-auto grid max-w-7xl grid-cols-1 items-center gap-10 px-6 py-24 md:grid-cols-2 md:py-32">
+      <div className="relative grid w-full grid-cols-1 items-center gap-10 px-6 py-24 md:min-h-[calc(100vh-4rem)] md:grid-cols-2 md:py-0">
         <div className="relative flex flex-col items-center gap-6 text-center md:items-start md:text-left">
           <h1 className="max-w-lg text-4xl font-bold leading-tight tracking-tight text-white sm:text-5xl">
             PCs que cambian el juego
@@ -225,6 +225,10 @@ function Hero() {
           </a>
         </div>
 
+        <div className="relative h-64 w-full md:absolute md:inset-y-0 md:right-0 md:h-auto md:w-1/2">
+          <OffersBar className="absolute left-4 right-4 top-4 z-10" />
+          <HeroCarousel className="h-full" />
+        </div>
       </div>
     </section>
   );
@@ -253,7 +257,7 @@ function Trending() {
   return (
     <section id="trending" className="relative overflow-hidden bg-[#0b0812] px-6 py-20">
       <div className="mx-auto max-w-7xl">
-        <h2 className="text-2xl font-semibold text-white sm:text-3xl">Tendencias</h2>
+        <h2 className="text-2xl font-semibold text-white sm:text-3xl">⚡OFERTAS RELAMPAGO⚡</h2>
         <p className="mt-2 text-zinc-400">Echa un vistazo a nuestras mejores configuraciones</p>
 
         <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -283,11 +287,6 @@ function Trending() {
             </div>
           ))}
         </div>
-      </div>
-
-      <div className="relative h-64 w-full md:absolute md:inset-y-0 md:right-0 md:h-auto md:w-1/2">
-        <OffersBar className="absolute left-4 right-4 top-4 z-10" />
-        <HeroCarousel className="h-full rounded-none border-0 shadow-none" />
       </div>
     </section>
   );
