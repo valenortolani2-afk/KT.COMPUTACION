@@ -22,11 +22,11 @@ This project uses [`next/font`](https://nextjs.org/docs/app/building-your-applic
 
 ## Administración y catálogo
 
-La ruta [`/admin`](http://localhost:3000/admin) permite publicar productos con foto, precio, descripción y una sección: **Tendencias**, **Novedades** o **Restaurados**. Las imágenes y los datos del catálogo se almacenan en Vercel Blob.
+La ruta [`/admin`](http://localhost:3000/admin) permite publicar y eliminar productos con foto, precio, descripción y una sección: **PC Gamer**, **Placas de video** o **Combos de actualización**. Al eliminar una publicación desde el panel se borran también su imagen y sus datos de Vercel Blob; la acción requiere confirmación y no se puede deshacer. En la tienda, al seleccionar la foto de un producto se abre la descripción y una lista de otros artículos.
 
 Antes de publicar, conectá un Blob Store al proyecto de Vercel o agregá `BLOB_READ_WRITE_TOKEN` a `.env.local` y a los entornos de Vercel. La aplicación mostrará un mensaje explícito mientras la variable no esté configurada.
 
-La ruta de administración no tiene autenticación por decisión actual; no debe exponerse públicamente hasta agregar protección de acceso.
+La ruta de administración no tiene autenticación por decisión actual; no debe exponerse públicamente hasta agregar protección de acceso. Esto también aplica a la eliminación de publicaciones.
 
 ## Learn More
 

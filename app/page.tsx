@@ -2,9 +2,9 @@ import Image from "next/image";
 import { ProductSections } from "@/app/components/product-sections";
 
 const NAV_LINKS = [
-  { label: "Tendencias", href: "#tendencias" },
-  { label: "Novedades", href: "#novedades" },
-  { label: "Restaurados", href: "#restaurados" },
+  { label: "PC Gamer", href: "#pc-gamer" },
+  { label: "Placas de video", href: "#placas-de-video" },
+  { label: "Combos de actualización", href: "#combos-actualizacion" },
   { label: "Configurador", href: "#configurador" },
 ];
 
@@ -206,7 +206,7 @@ function Hero() {
             Encuentra la configuración de tu computadora ideal
           </p>
           <a
-            href="#tendencias"
+            href="#pc-gamer"
             className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-violet-600 to-fuchsia-600 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-violet-900/40 transition-transform hover:scale-105"
           >
             Comprar ahora

@@ -1,4 +1,4 @@
-export const PRODUCT_CATEGORIES = ["tendencias", "novedades", "restaurados"] as const;
+export const PRODUCT_CATEGORIES = ["pc-gamer", "placas-de-video", "combos-actualizacion"] as const;
 
 export type ProductCategory = (typeof PRODUCT_CATEGORIES)[number];
 

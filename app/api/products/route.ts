@@ -1,4 +1,4 @@
-import { get, list, put } from "@vercel/blob";
+import { del, get, list, put } from "@vercel/blob";
 import { NextResponse } from "next/server";
 import { isProductCategory, type Product } from "@/lib/products";
 
@@ -149,6 +149,57 @@ export async function POST(request: Request) {
     console.error("No se pudo guardar el producto en Vercel Blob.", error);
     return NextResponse.json(
       { message: "No se pudo guardar el producto. Intentá nuevamente." },
+      { status: 500 },
+    );
+  }
+}
+
+export async function DELETE(request: Request) {
+  if (!isBlobConfigured()) {
+    return NextResponse.json(
+      { message: "Configurá Vercel Blob antes de eliminar productos." },
+      { status: 503 },
+    );
+  }
+
+  const productId = new URL(request.url).searchParams.get("id");
+  if (!productId || !/^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$/i.test(productId)) {
+    return NextResponse.json({ message: "El identificador del producto no es válido." }, { status: 400 });
+  }
+
+  const productPath = `${PRODUCT_PREFIX}${productId}.json`;
+
+  try {
+    const response = await get(productPath, { access: "public", useCache: false });
+    if (!response) {
+      return NextResponse.json({ message: "No se encontró el producto." }, { status: 404 });
+    }
+    if (response.statusCode !== 200) {
+      throw new Error(`No se pudo leer la publicación ${productPath}.`);
+    }
+
+    const productValue: unknown = await new Response(response.stream).json();
+    if (!isProduct(productValue) || productValue.id !== productId) {
+      throw new Error(`La publicación ${productPath} no tiene un formato válido.`);
+    }
+
+    const imageUrl = new URL(productValue.imageUrl);
+    const imagePath = imageUrl.pathname.slice(1);
+    const validImagePath = new RegExp(`^${IMAGE_PREFIX}${productId}\\.[a-zA-Z0-9]+$`, "i");
+    if (
+      imageUrl.protocol !== "https:" ||
+      !imageUrl.hostname.endsWith(".public.blob.vercel-storage.com") ||
+      !validImagePath.test(imagePath)
+    ) {
+      throw new Error(`La imagen de la publicación ${productPath} no tiene una ruta válida.`);
+    }
+
+    await del([productPath, imagePath]);
+    return NextResponse.json({ deleted: true });
+  } catch (error) {
+    console.error("No se pudo eliminar el producto de Vercel Blob.", error);
+    return NextResponse.json(
+      { message: "No se pudo eliminar el producto. Intentá nuevamente." },
       { status: 500 },
     );
   }

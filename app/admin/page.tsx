@@ -1,18 +1,50 @@
 "use client";
 
-import { FormEvent, useState } from "react";
-import { PRODUCT_CATEGORIES, type ProductCategory } from "@/lib/products";
+import Image from "next/image";
+import { FormEvent, useEffect, useState } from "react";
+import { PRODUCT_CATEGORIES, type Product, type ProductCategory } from "@/lib/products";
 
 const CATEGORY_LABELS: Record<ProductCategory, string> = {
-  tendencias: "Tendencias",
-  novedades: "Novedades",
-  restaurados: "Restaurados",
+  "pc-gamer": "PC Gamer",
+  "placas-de-video": "Placas de video",
+  "combos-actualizacion": "Combos de actualización",
 };
 
 export default function AdminPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [deletingProductId, setDeletingProductId] = useState<string | null>(null);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [isLoadingProducts, setIsLoadingProducts] = useState(true);
   const [message, setMessage] = useState<string | null>(null);
   const [isError, setIsError] = useState(false);
+
+  useEffect(() => {
+    async function loadProducts() {
+      try {
+        const response = await fetch("/api/products");
+        const payload: unknown = await response.json();
+        const result = payload && typeof payload === "object"
+          ? (payload as { products?: Product[]; configured?: boolean; message?: string })
+          : {};
+
+        if (!response.ok || !result.configured) {
+          setIsError(true);
+          setMessage(result.message ?? "No se pudo cargar la lista de publicaciones.");
+          return;
+        }
+
+        setProducts(result.products ?? []);
+      } catch (error) {
+        console.error("No se pudieron cargar las publicaciones del administrador.", error);
+        setIsError(true);
+        setMessage("No se pudo conectar con el catálogo para cargar las publicaciones.");
+      } finally {
+        setIsLoadingProducts(false);
+      }
+    }
+
+    void loadProducts();
+  }, []);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -26,20 +58,60 @@ export default function AdminPage() {
         body: new FormData(form),
       });
       const payload: unknown = await response.json();
-      const result = payload && typeof payload === "object" ? (payload as { message?: string }) : {};
+      const result = payload && typeof payload === "object"
+        ? (payload as { message?: string; product?: Product })
+        : {};
+      const product = result.product;
 
-      setIsError(!response.ok);
-      setMessage(response.ok ? "Producto publicado correctamente." : result.message ?? "No se pudo publicar el producto.");
-
-      if (response.ok) {
-        form.reset();
+      if (!response.ok || !product) {
+        setIsError(true);
+        setMessage(result.message ?? "No se pudo publicar el producto.");
+        return;
       }
+
+      setProducts((currentProducts) => [product, ...currentProducts]);
+      setIsError(false);
+      setMessage("Producto publicado correctamente.");
+      form.reset();
     } catch (error) {
       console.error("No se pudo enviar el producto.", error);
       setIsError(true);
       setMessage("No se pudo conectar con el servidor para publicar el producto.");
     } finally {
       setIsSubmitting(false);
+    }
+  }
+
+  async function handleDelete(productId: string, productName: string) {
+    if (!window.confirm(`¿Eliminar "${productName}"? Esta acción no se puede deshacer.`)) {
+      return;
+    }
+
+    setDeletingProductId(productId);
+    setMessage(null);
+
+    try {
+      const response = await fetch(`/api/products?id=${encodeURIComponent(productId)}`, {
+        method: "DELETE",
+      });
+      const payload: unknown = await response.json();
+      const result = payload && typeof payload === "object" ? (payload as { message?: string }) : {};
+
+      if (!response.ok) {
+        setIsError(true);
+        setMessage(result.message ?? "No se pudo eliminar el producto.");
+        return;
+      }
+
+      setProducts((currentProducts) => currentProducts.filter((product) => product.id !== productId));
+      setIsError(false);
+      setMessage("Producto y foto eliminados correctamente.");
+    } catch (error) {
+      console.error("No se pudo eliminar el producto.", error);
+      setIsError(true);
+      setMessage("No se pudo conectar con el servidor para eliminar el producto.");
+    } finally {
+      setDeletingProductId(null);
     }
   }
 
@@ -97,7 +169,7 @@ export default function AdminPage() {
             <select
               required
               name="category"
-              defaultValue="tendencias"
+              defaultValue="pc-gamer"
               className="mt-2 w-full rounded-xl border border-white/10 bg-black/30 px-4 py-3 text-white outline-none transition focus:border-violet-400"
             >
               {PRODUCT_CATEGORIES.map((category) => (
@@ -133,6 +205,45 @@ export default function AdminPage() {
             {isSubmitting ? "Publicando..." : "Publicar producto"}
           </button>
         </form>
+
+        <section className="mt-12">
+          <h2 className="text-2xl font-semibold">Publicaciones actuales</h2>
+          <p className="mt-2 text-sm text-zinc-400">Desde aquí podés revisar o eliminar publicaciones del catálogo.</p>
+
+          {isLoadingProducts ? (
+            <p className="mt-6 text-sm text-zinc-400">Cargando publicaciones...</p>
+          ) : products.length > 0 ? (
+            <ul className="mt-6 space-y-4">
+              {products.map((product) => (
+                <li
+                  key={product.id}
+                  className="flex flex-col gap-4 rounded-2xl border border-white/10 bg-[#120f1c] p-4 sm:flex-row sm:items-center"
+                >
+                  <div className="relative h-24 w-full shrink-0 overflow-hidden rounded-xl sm:w-28">
+                    <Image src={product.imageUrl} alt={product.name} fill sizes="112px" className="object-cover" />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <h3 className="font-semibold text-white">{product.name}</h3>
+                    <p className="mt-1 text-sm text-violet-300">{CATEGORY_LABELS[product.category]}</p>
+                    <p className="mt-1 text-sm text-zinc-400">{product.price}</p>
+                  </div>
+                  <button
+                    type="button"
+                    disabled={deletingProductId !== null}
+                    onClick={() => void handleDelete(product.id, product.name)}
+                    className="rounded-xl border border-red-400/30 px-4 py-2 text-sm font-semibold text-red-300 transition hover:bg-red-500/10 disabled:cursor-not-allowed disabled:opacity-50"
+                  >
+                    {deletingProductId === product.id ? "Eliminando..." : "Eliminar"}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="mt-6 rounded-2xl border border-dashed border-white/15 p-6 text-sm text-zinc-500">
+              Todavía no hay publicaciones para administrar.
+            </p>
+          )}
+        </section>
       </div>
     </main>
   );
