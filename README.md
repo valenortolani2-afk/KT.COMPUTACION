@@ -22,11 +22,19 @@ This project uses [`next/font`](https://nextjs.org/docs/app/building-your-applic
 
 ## Administración y catálogo
 
-La ruta [`/admin`](http://localhost:3000/admin) permite publicar y eliminar productos con foto, precio, descripción y una sección: **PC Gamer**, **Placas de video** o **Combos de actualización**. Al eliminar una publicación desde el panel se borran también su imagen y sus datos de Vercel Blob; la acción requiere confirmación y no se puede deshacer. En la tienda, al seleccionar la foto de un producto se abre la descripción y una lista de otros artículos.
+Los clientes pueden crear una cuenta e iniciar sesión desde la barra superior con email y contraseña. La autenticación usa Clerk; antes de ponerla en producción, verificá que email y contraseña estén habilitados en la configuración de autenticación de Clerk.
 
-Antes de publicar, conectá un Blob Store al proyecto de Vercel o agregá `BLOB_READ_WRITE_TOKEN` a `.env.local` y a los entornos de Vercel. La aplicación mostrará un mensaje explícito mientras la variable no esté configurada.
+La ruta [`/admin`](http://localhost:3000/admin) permite publicar y eliminar productos con foto, precio, descripción y una sección: **PC Gamer**, **Placas de video** o **Combos de actualización**. La página y las operaciones de publicación y borrado requieren una sesión de Clerk con `role: "admin"` en la metadata privada del usuario. Para habilitar la cuenta administradora, registrá o elegí un usuario en Clerk Dashboard y asignale en **Private metadata**:
 
-La ruta de administración no tiene autenticación por decisión actual; no debe exponerse públicamente hasta agregar protección de acceso. Esto también aplica a la eliminación de publicaciones.
+```json
+{ "role": "admin" }
+```
+
+Los clientes registrados no reciben ese permiso automáticamente. La API pública de lectura del catálogo sigue disponible; las rutas para crear y borrar publicaciones rechazan solicitudes sin sesión (401) o sin rol de administrador (403).
+
+Al eliminar una publicación desde el panel se borran también su imagen y sus datos de Vercel Blob; la acción requiere confirmación y no se puede deshacer. En la tienda, al seleccionar la foto de un producto se abre la descripción y una lista de otros artículos.
+
+El catálogo usa Vercel Blob. Antes de publicar, conectá un Blob Store al proyecto o agregá `BLOB_READ_WRITE_TOKEN` a `.env.local` y a los entornos de Vercel. La aplicación mostrará un mensaje explícito mientras la variable no esté configurada.
 
 ## Learn More
 

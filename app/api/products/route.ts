@@ -1,5 +1,6 @@
 import { del, get, list, put } from "@vercel/blob";
 import { NextResponse } from "next/server";
+import { requireAdminApi } from "@/lib/admin-auth";
 import { isProductCategory, type Product } from "@/lib/products";
 
 const PRODUCT_PREFIX = "catalog/products/";
@@ -79,6 +80,11 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
+  const authorization = await requireAdminApi();
+  if (authorization) {
+    return authorization;
+  }
+
   if (!isBlobConfigured()) {
     return NextResponse.json(
       { message: "Configurá BLOB_READ_WRITE_TOKEN antes de cargar productos." },
@@ -155,6 +161,11 @@ export async function POST(request: Request) {
 }
 
 export async function DELETE(request: Request) {
+  const authorization = await requireAdminApi();
+  if (authorization) {
+    return authorization;
+  }
+
   if (!isBlobConfigured()) {
     return NextResponse.json(
       { message: "Configurá Vercel Blob antes de eliminar productos." },

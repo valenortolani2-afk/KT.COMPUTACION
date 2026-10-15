@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { AccountMenu } from "@/app/components/account-menu";
 import { ProductSections } from "@/app/components/product-sections";
 
 const NAV_LINKS = [
@@ -163,6 +164,7 @@ function Navbar() {
           <button className="rounded-full border border-white/10 p-2 text-zinc-300 transition-colors hover:bg-white/10 hover:text-white">
             <IconCart className="h-4 w-4" />
           </button>
+          <AccountMenu />
           <a
             href="/admin"
             aria-label="Administración"
