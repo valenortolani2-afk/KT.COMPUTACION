@@ -20,6 +20,14 @@ You can start editing the page by modifying `app/page.tsx`. The page auto-update
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
+## Administración y catálogo
+
+La ruta [`/admin`](http://localhost:3000/admin) permite publicar productos con foto, precio, descripción y una sección: **Tendencias**, **Novedades** o **Restaurados**. Las imágenes y los datos del catálogo se almacenan en Vercel Blob.
+
+Antes de publicar, conectá un Blob Store al proyecto de Vercel o agregá `BLOB_READ_WRITE_TOKEN` a `.env.local` y a los entornos de Vercel. La aplicación mostrará un mensaje explícito mientras la variable no esté configurada.
+
+La ruta de administración no tiene autenticación por decisión actual; no debe exponerse públicamente hasta agregar protección de acceso.
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:

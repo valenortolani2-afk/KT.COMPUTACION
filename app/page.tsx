@@ -1,26 +1,11 @@
 import Image from "next/image";
+import { ProductSections } from "@/app/components/product-sections";
 
-const NAV_LINKS = ["Tendencias", "Novedades", "Restaurados", "Configurador"];
-
-const PRODUCTS = [
-  {
-    tag: "NUEVO",
-    name: "MSI Trident 3",
-    desc: "La definitiva PC gamer de nueva generación",
-    price: "$1490",
-  },
-  {
-    tag: "RESTAURADO",
-    name: "MSI Trident 3",
-    desc: "La definitiva PC gamer de nueva generación",
-    price: "$1490",
-  },
-  {
-    tag: "NUEVO",
-    name: "MSI Trident 3",
-    desc: "La definitiva PC gamer de nueva generación",
-    price: "$1490",
-  },
+const NAV_LINKS = [
+  { label: "Tendencias", href: "#tendencias" },
+  { label: "Novedades", href: "#novedades" },
+  { label: "Restaurados", href: "#restaurados" },
+  { label: "Configurador", href: "#configurador" },
 ];
 
 const MARQUEE_ITEMS = [
@@ -156,8 +141,8 @@ function Navbar() {
 
         <nav className="hidden items-center gap-7 text-sm text-zinc-300 md:flex">
           {NAV_LINKS.map((link) => (
-            <a key={link} href="#" className="flex items-center gap-1 transition-colors hover:text-white">
-              {link}
+            <a key={link.label} href={link.href} className="flex items-center gap-1 transition-colors hover:text-white">
+              {link.label}
               <IconChevron className="h-3.5 w-3.5 opacity-60" />
             </a>
           ))}
@@ -178,9 +163,13 @@ function Navbar() {
           <button className="rounded-full border border-white/10 p-2 text-zinc-300 transition-colors hover:bg-white/10 hover:text-white">
             <IconCart className="h-4 w-4" />
           </button>
-          <button className="rounded-full bg-violet-600 p-2 text-white transition-colors hover:bg-violet-500">
+          <a
+            href="/admin"
+            aria-label="Administración"
+            className="rounded-full bg-violet-600 p-2 text-white transition-colors hover:bg-violet-500"
+          >
             <IconUser className="h-4 w-4" />
-          </button>
+          </a>
         </div>
       </div>
     </header>
@@ -217,7 +206,7 @@ function Hero() {
             Encuentra la configuración de tu computadora ideal
           </p>
           <a
-            href="#trending"
+            href="#tendencias"
             className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-violet-600 to-fuchsia-600 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-violet-900/40 transition-transform hover:scale-105"
           >
             Comprar ahora
@@ -250,45 +239,6 @@ function MarqueeBar() {
         ))}
       </div>
     </div>
-  );
-}
-
-function Trending() {
-  return (
-    <section id="trending" className="relative overflow-hidden bg-[#0b0812] px-6 py-20">
-      <div className="mx-auto max-w-7xl">
-        <h2 className="text-2xl font-semibold text-white sm:text-3xl">⚡OFERTAS RELAMPAGO⚡</h2>
-        <p className="mt-2 text-zinc-400">Echa un vistazo a nuestras mejores configuraciones</p>
-
-        <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {PRODUCTS.map((product, i) => (
-            <div
-              key={i}
-              className="group rounded-2xl border border-white/10 bg-[#120f1c] p-4 transition-colors hover:border-violet-500/50"
-            >
-              <div className="relative">
-                <PCGlyph className="h-44 w-full" />
-                <span className="absolute left-3 top-3 rounded-full bg-black/70 px-2.5 py-1 text-[10px] font-semibold tracking-wide text-violet-300">
-                  {product.tag}
-                </span>
-              </div>
-              <h3 className="mt-4 font-semibold text-white">{product.name}</h3>
-              <p className="mt-1 text-sm text-zinc-400">{product.desc}</p>
-              <div className="mt-4 flex items-center justify-between">
-                <span className="text-lg font-bold text-white">{product.price}</span>
-                <a
-                  href="#"
-                  className="flex items-center gap-1 text-sm font-medium text-violet-400 transition-colors group-hover:text-violet-300"
-                >
-                  Ver más
-                  <IconArrow className="h-3.5 w-3.5" />
-                </a>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
   );
 }
 
@@ -340,7 +290,7 @@ export default function Home() {
       <Navbar />
       <Hero />
       <MarqueeBar />
-      <Trending />
+      <ProductSections />
       <Spotlight />
       <MarqueeBar />
       <Footer />
